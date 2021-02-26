@@ -1,23 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { Container, Grid } from "@material-ui/core";
+import { addMaintenance, getMaintenances } from "./api/maintenances";
+import { useEffect, useState } from "react";
+
+import { Car } from "./components/Car";
+import { MyAppBar } from "./components/MyAppBar";
+import { ToastContainer } from 'react-toastify';
+import { getCars } from "./api/cars";
 
 function App() {
+  const [cars, setCars] = useState([]);
+  const [maintenances, setMaintenances] = useState(null);
+
+  useEffect(() => {
+    getCars().then(setCars).catch(console.log);
+
+    getMaintenances().then(setMaintenances).catch(console.log);
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <MyAppBar />
+      <Container style={{ marginTop: "10px" }}>
+        <Grid container justify="center" alignItems="center" spacing={2}>
+          {maintenances && (
+            <>
+              {cars.map((car) => (
+                <Grid key={car.id} item>
+                  <Car addMaintenance={addMaintenance} maintenances={maintenances} car={car} />
+                </Grid>
+              ))}
+            </>
+          )}
+        </Grid>
+      </Container>
+      <ToastContainer />
     </div>
   );
 }
